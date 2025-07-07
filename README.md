@@ -49,23 +49,18 @@ file-manager/
 
 **Expected Output:**
 ```
-=== File Management Utility ===
-Directory: /var/log
-Keyword: error
+_________File Management System_________
 
-Searching for files containing 'error' in /var/log...
+enter keyword to search: error
+
+Searching for files containing 'error' 
 Found 3 files containing 'error'
 
 Create backup archive? (y/n): y
 Creating backup archive: archive_20250707_101605.tar.gz
 Backup created successfully: archive_20250707_101605.tar.gz
 Operation completed. Check logs/actions.log for details.
-```
-
-### Example 2: Verbose search with exclusions
-```bash
-./search_backup.sh -v --exclude=*.tmp /home/user "TODO"
-```
+``
 
 **Sample Log Entries:**
 ```
