@@ -154,7 +154,7 @@ chmod +x search_backup.sh
 
 ## Author
 
-DevOps Student - Week 1 Linux + Git Project
+DevOps Student Muteeba Shahzad - Week 1 Linux + Git Project
 
 ## License
 
