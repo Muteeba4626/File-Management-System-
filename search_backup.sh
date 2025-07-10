@@ -54,5 +54,5 @@ fi
 rm -f "$TMP"
 echo "Log: $LOG"
 printf "\n"
-echo "------------GOOD BYEEEE :>---------------------"
+echo "------------GOOD BYEEEE :>------------------------"
 printf "\n"
