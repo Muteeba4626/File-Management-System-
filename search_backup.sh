@@ -2,7 +2,7 @@
 
 printf "\n"
 printf "\n"
-echo "------------FILE MANAGEMENT SYSTEM---------------------"
+echo "----------- FILE MANAGEMENT SYSTEM --------------"
 printf "\n"
 
 TMP="/tmp/matched_files.txt"
@@ -71,21 +71,19 @@ fi
 
 printf "\n"
 echo "Pushing to Git..."
-
-# ---- Git Tagging ----
 git checkout -B enhanced-backup
 git add .
-git commit -m "Backup on $DATE"
 
-# Only tag if commit was successful
-if [ $? -eq 0 ]; then
+if git commit -m "Backup on $DATE"; then
+
     git tag "backup-$DATE"
     git push origin enhanced-backup
     git push origin "backup-$DATE"
-    git push --tags
+    echo "Git tag 'backup-$DATE' created and pushed."
 else
-    echo " Nothing to commit. Skipping tag."
+    echo "  Nothing new to commit. Tag not created."
 fi
+
 
 
 
