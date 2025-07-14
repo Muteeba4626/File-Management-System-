@@ -1,156 +1,281 @@
-#File Management Utility
-
-A command-line tool for searching files containing specific keywords and creating backup archives.
+# Enhanced Backup Service
+A comprehensive DevOps backup solution with incremental backups, automated scheduling, Git versioning, and web-server integration.
 
 ## Features
-
-- **Search Tool**: Scans directories for files containing specified keywords
-- **Backup Option**: Creates timestamped tar.gz archives of matched files
-- **Logging**: Logs all actions with timestamps to a persistent log file
-- **Colored Output**: Uses ANSI colors for better readability
-- **Verbose Mode**: Optional detailed output showing line numbers and matches
-- **File Exclusion**: Ability to exclude specific file patterns
+- **CLI Flag Support**: Command-line options using `getopts` for flexible operation
+- **Incremental Backups**: Efficient `rsync`-based incremental backup system
+- **Daily Reports**: Automated generation of backup statistics and file counts
+- **Cron Scheduling**: Automated daily backup execution
+- **Git Versioning**: Automatic tagging and version control for each backup
+- **Web Server Integration**: Apache/Nginx configuration for web-based backup access
+- **Logging**: Comprehensive logging with timestamps
+- **Error Handling**: Robust error detection and reporting
 
 ## Project Structure
-
 ```
-file-manager/
-├── search_backup.sh    # Main script
+enhanced-backup/
+├── search_backup.sh       # Main enhanced backup script
+├── backups/
+│   ├── incremental-20250714/  # Daily incremental backups
+│   └── incremental-20250713/
 ├── logs/
-│   └── actions.log     # Activity log file
-└── README.md          # This documentation
+│   └── actions.log        # Activity log file
+├── report.txt             # Daily backup report
+├── cronjob.txt           # Cron configuration
+├── web-config/           # Web server configuration
+│   └── apache-backup.conf
+└── README.md             # This documentation
 ```
 
 ## Usage
 
 ### Basic Usage
 ```bash
-./search_backup.sh /path/to/directory "keyword"
+./search_backup.sh -d /path/to/source -i -r
 ```
 
-### Advanced Usage
+### Command Line Options
+- `-d <directory>`: Set source directory (default: `./data`)
+- `-i`: Enable incremental backup mode
+- `-r`: Generate daily report with file count and total size
+
+### Examples
+
+#### Example 1: Basic incremental backup with report
 ```bash
-# Enable verbose output
-./search_backup.sh -v /var/log "error"
-
-# Exclude specific file types
-./search_backup.sh --exclude=*.log /home/user "TODO"
-
-# Show help
-./search_backup.sh --help
-```
-
-## Examples
-
-### Example 1: Search for "error" in log files
-```bash
-./search_backup.sh /var/log "error"
+./search_backup.sh -d /home/user/documents -i -r
 ```
 
 **Expected Output:**
 ```
-_________File Management System_________
+_________Enhanced Backup Service_________
+Source Directory: /home/user/documents
+Backup Mode: Incremental
+Creating incremental backup: backups/incremental-20250714
+Running rsync with link-dest optimization...
+Backup completed successfully!
+Generating daily report...
+Report saved to: report.txt
+```
 
-enter keyword to search: error
+#### Example 2: Default directory backup
+```bash
+./search_backup.sh -i -r
+```
 
-Searching for files containing 'error' 
-Found 3 files containing 'error'
-
-Create backup archive? (y/n): y
-Creating backup archive: archive_20250707_101605.tar.gz
-Backup created successfully: archive_20250707_101605.tar.gz
-Operation completed. Check logs/actions.log for details.
-``
+**Sample Report Output (`report.txt`):**
+```
+Daily Backup Report - 2025-07-14
+================================
+3 files archived, total 2.1M
+Source: /home/user/data
+Destination: backups/incremental-20250714
+Backup Type: Incremental
+Timestamp: 2025-07-14 01:00:32
+```
 
 **Sample Log Entries:**
 ```
-2025-07-07 10:15:32 | Script started - searching for 'error' in '/var/log'
-2025-07-07 10:15:32 | Search: 3 files matched keyword "error"
-2025-07-07 10:16:05 | Archived 3 files to archive_20250707_101605.tar.gz
-2025-07-07 10:16:05 | Script completed
+2025-07-14 01:00:30 | Script started - incremental backup mode enabled
+2025-07-14 01:00:31 | Source directory: /home/user/data
+2025-07-14 01:00:32 | Incremental backup created: backups/incremental-20250714
+2025-07-14 01:00:32 | Report generated: 3 files, 2.1M total
+2025-07-14 01:00:33 | Git tag created: backup-20250714
+2025-07-14 01:00:33 | Script completed successfully
 ```
 
-## Key Linux Commands Used
+## Key Technologies Used
+- **rsync**: For efficient incremental backups with `--link-dest` optimization
+- **getopts**: For command-line argument parsing
+- **du/awk**: For file size calculations and reporting
+- **cron**: For automated scheduling
+- **git**: For version control and tagging
+- **Apache/Nginx**: For web-based backup access
 
-- **grep**: For searching text patterns within files
-- **find**: For locating files in directory trees
-- **tar**: For creating compressed archives
-- **date**: For timestamp generation
-- **mkdir**: For creating directories
-- **wc**: For counting lines in files
-- **read**: For user input prompts
+## Installation & Setup
 
-## Git Workflow
-
-This project follows a clean Git workflow with meaningful commits:
-
-1. **Initial Setup**: `git init` and basic project structure
-2. **Feature Development**: Separate commits for each major feature
-3. **Documentation**: Final commit for README and documentation
-4. **Versioning**: Proper commit messages following conventional format
-
-### Commit History
-```
-feat: add search script
-feat: add archiving function and logging
-docs: add README and sample logs
-```
-
-## Installation
-
-1. Clone the repository:
+### 1. Clone and Setup
 ```bash
 git clone <repository-url>
-cd file-manager
-```
-
-2. Make the script executable:
-```bash
+cd enhanced-backup
+git checkout -b enhanced-backup
 chmod +x search_backup.sh
 ```
 
-3. Run the script:
+### 2. Cron Setup
 ```bash
-./search_backup.sh /path/to/search "keyword"
+# Install cron job
+crontab cronjob.txt
+
+# Verify cron installation
+crontab -l
 ```
 
-## Requirements
+**Cron Configuration (`cronjob.txt`):**
+```
+# Daily backup at 1:00 AM
+0 1 * * * /path/to/search_backup.sh -d /home/user/data -i -r
+```
 
-- Bash shell (version 4.0+)
-- Standard Linux utilities: grep, find, tar, date
-- Read permissions on target directories
-- Write permissions for log files and archives
+### 3. Web Server Configuration
+
+#### Apache Setup
+```bash
+# Install Apache
+sudo apt update && sudo apt install apache2
+
+# Enable and start service
+sudo systemctl enable --now apache2
+
+# Copy backups to web root
+sudo cp -r backups /var/www/html/backups
+
+# Apply configuration
+sudo cp web-config/apache-backup.conf /etc/apache2/sites-available/
+sudo a2ensite apache-backup
+sudo systemctl reload apache2
+```
+
+#### Nginx Setup
+```bash
+# Install Nginx
+sudo apt update && sudo apt install nginx
+
+# Enable and start service
+sudo systemctl enable --now nginx
+
+# Copy backups to web root
+sudo cp -r backups /var/www/html/backups
+
+# Apply configuration
+sudo cp web-config/nginx-backup.conf /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/nginx-backup.conf /etc/nginx/sites-enabled/
+sudo systemctl reload nginx
+```
+
+### 4. Verification
+```bash
+# Test web access
+curl http://localhost/backups/
+
+# Check backup functionality
+./search_backup.sh -d ./data -i -r
+```
+
+## Git Workflow & Versioning
+
+### Automatic Tagging
+The script automatically creates Git tags for each backup:
+```bash
+git tag backup-$(date +%Y%m%d)
+git push --tags
+```
+
+### Branch Structure
+- **Main Branch**: `enhanced-backup`
+- **Tag Format**: `backup-YYYYMMDD`
+- **Required Tags**: Minimum 2 tags for project completion
+
+### Commit History
+```
+feat: add getopts CLI flag support
+feat: implement rsync incremental backups
+feat: add daily report generation with du/awk
+feat: add cron scheduling configuration
+feat: implement git auto-tagging
+feat: add Apache/Nginx web server integration
+docs: update README with enhanced features
+```
+
+## Web Server Integration
+
+### Apache VirtualHost Configuration
+```apache
+<VirtualHost *:80>
+    DocumentRoot /var/www/html
+    
+    <Directory "/var/www/html/backups">
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+        DirectoryIndex disabled
+    </Directory>
+    
+    Alias /backups /var/www/html/backups
+</VirtualHost>
+```
+
+### Nginx Server Block
+```nginx
+server {
+    listen 80;
+    root /var/www/html;
+    
+    location /backups/ {
+        alias /var/www/html/backups/;
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_localtime on;
+    }
+}
+```
 
 ## Script Features Breakdown
 
-### Search Functionality
-- Recursively searches through directories
-- Uses `grep` for pattern matching
-- Handles binary files gracefully
-- Supports file exclusion patterns
+### Incremental Backup System
+- Uses `rsync -a --link-dest=../previous` for space-efficient backups
+- Maintains file permissions and timestamps
+- Creates hard links for unchanged files
+- Organizes backups by date: `backups/incremental-YYYYMMDD`
 
-### Backup Creation
-- Creates timestamped tar.gz archives
-- Preserves file structure and permissions
-- Validates archive creation success
-- Stores archives in current directory
+### CLI Flag Processing
+- Robust `getopts` implementation
+- Input validation and error handling
+- Default value fallbacks
+- Help message support
 
-### Logging System
-- Persistent logging across script runs
-- Timestamp format: YYYY-MM-DD HH:MM:SS
-- Automatic log directory creation
-- Both file and console output options
+### Daily Reporting
+- File count statistics using `find` and `wc`
+- Total size calculation with `du` and `awk`
+- Formatted output with timestamps
+- Persistent report storage
 
-### Error Handling
-- Input validation for directories and keywords
-- Permission checking before operations
-- Graceful handling of missing files
-- User-friendly error messages
+### Automation Features
+- Cron-ready script design
+- Non-interactive execution mode
+- Comprehensive error handling
+- Exit code management for monitoring
+
+## Requirements
+- Bash shell (version 4.0+)
+- rsync utility
+- Standard Linux utilities: du, awk, find, date
+- Git for version control
+- Apache or Nginx web server
+- Cron daemon
+- Read permissions on source directories
+- Write permissions for backup destinations
+
+## Troubleshooting
+
+### Common Issues
+1. **Permission Denied**: Ensure script has execute permissions
+2. **Rsync Errors**: Check source directory accessibility
+3. **Cron Not Running**: Verify cron service status
+4. **Web Access Issues**: Check Apache/Nginx configuration and permissions
+
+### Debug Mode
+```bash
+# Enable verbose output
+bash -x ./search_backup.sh -d /path/to/data -i -r
+```
 
 ## Author
-
-DevOps Student Muteeba Shahzad - Week 1 Linux + Git Project
+DevOps Student Muteeba Shahzad - Enhanced Backup Service Project  
+Building on Week 1 Linux + Git foundations with advanced DevOps practices
 
 ## License
+This project is for educational purposes as part of DevOps Pre-Requisite Course training.
 
-This project is for educational purposes as part of DevOps training.
+## Time Investment
+Approximately 4 hours for complete implementation and testing.
