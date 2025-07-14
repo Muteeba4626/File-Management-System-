@@ -1,0 +1,2 @@
+0 1 * * * /home/muteeba/Enhanced-Backup/search_backup.sh -d /home/muteeba/Enhanced-Backup/data -i -r
+
