@@ -73,10 +73,19 @@ printf "\n"
 echo "Pushing to Git..."
 git checkout -B enhanced-backup
 git add .
-git commit -m "Backup on $DATE"
-git tag "backup-$DATE"
-git push origin enhanced-backup
-git push --tags
+
+if git commit -m "Backup on $DATE"; then
+
+    git tag "backup-$DATE"
+    git push origin enhanced-backup
+    git push origin "backup-$DATE"
+    echo "Git tag 'backup-$DATE' created and pushed."
+else
+    echo "  Nothing new to commit. Tag not created."
+fi
+
+
+
 
 rm -f "$TMP"
 echo "Log: $LOG"
