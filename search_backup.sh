@@ -1,12 +1,9 @@
 #!/bin/bash
 
-printf "\n"
-echo "_________Enhanced Backup Service_________"
-printf "\n"
 
 SRC_DIR="./data"
-DO_INCREMENTAL=false
-DO_REPORT=false
+DO_INCREMENTAL=false    #-i flag 
+DO_REPORT=false         #-r flag 
 BACKUP_TYPE=""
 
 while getopts ":d:ir" opt; do
@@ -14,7 +11,7 @@ while getopts ":d:ir" opt; do
     d) SRC_DIR="$OPTARG" ;;
     i) DO_INCREMENTAL=true ;;
     r) DO_REPORT=true ;;
-    \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+    \?) echo "Invalid option: -$OPTARG" >&2; exit 0;;
   esac
 done
 shift $((OPTIND -1))
@@ -29,6 +26,11 @@ PREV_FOLDER=$(ls -d backups/incremental-* 2>/dev/null | sort | tail -n 1)
 
 mkdir -p logs backups
 > "$TMP"
+
+printf "\n"
+echo "_________Enhanced Backup Service_________"
+printf "\n"
+
 
 read -p "Enter keyword to search: " KEY
 
