@@ -38,7 +38,7 @@ for f in $(find "$SRC_DIR" -type f); do
     echo "$REL_PATH" >> "$TMP"
   fi
 done
-
+printf "\n"
 if [ -s "$TMP" ]; then
   echo "Files containing '$KEY':"
   cat "$TMP"
@@ -49,7 +49,7 @@ else
   rm -f "$TMP"
   exit 1
 fi
-
+printf "\n"
 read -p "Backup matched files (tar)? (y/n): " ans_tar
 if [[ "$ans_tar" =~ ^[Yy]$ ]]; then
   tar -czf "$ARCHIVE" -C "$SRC_DIR" -T "$TMP"
@@ -60,7 +60,7 @@ else
   echo "Tar backup skipped"
   echo "$TIME | Tar backup skipped" >> "$LOG"
 fi
-
+printf "\n"
 read -p "Backup matched files (incremental rsync)? (y/n): " ans_rsync
 if [[ "$ans_rsync" =~ ^[Yy]$ ]]; then
   mkdir -p "$BACKUP_FOLDER"
@@ -69,6 +69,7 @@ if [[ "$ans_rsync" =~ ^[Yy]$ ]]; then
   else
     rsync -a --files-from="$TMP" "$SRC_DIR/" "$BACKUP_FOLDER/"
   fi
+  printf "\n"
   echo "Incremental backup saved to $BACKUP_FOLDER"
   echo "$TIME | Rsync incremental backup: $BACKUP_FOLDER" >> "$LOG"
   BACKUP_TYPE="Incremental"
@@ -91,7 +92,7 @@ if [ "$DO_REPORT" = true ]; then
   } > report.txt
   echo "$TIME | Report generated: report.txt" >> "$LOG"
 fi
-
+printf "\n"
 echo "Pushing to Git..."
 git checkout -B enhanced-backup
 git add .
@@ -104,7 +105,7 @@ if git commit -m "Backup on $DATE"; then
 else
   echo "Nothing new to commit. Tag not created."
 fi
-
+printf "\n"
 rm -f "$TMP"
 echo "Log: $LOG"
 echo "------------GOOD BYEEEE :>------------------------"
