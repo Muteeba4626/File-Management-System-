@@ -14,17 +14,15 @@ A comprehensive DevOps backup solution with incremental backups, automated sched
 ## Project Structure
 ```
 enhanced-backup/
-├── search_backup.sh       # Main enhanced backup script
+├── search_backup.sh       
 ├── backups/
-│   ├── incremental-20250714/  # Daily incremental backups
-│   └── incremental-20250713/
+│   └── cronjob.txt  
 ├── logs/
-│   └── actions.log        # Activity log file
-├── report.txt             # Daily backup report
-├── cronjob.txt           # Cron configuration
-├── web-config/           # Web server configuration
+│   └── actions.log        
+├── report.txt                   
+├── web-config/          
 │   └── apache-backup.conf
-└── README.md             # This documentation
+└── README.md            
 ```
 
 ## Usage
@@ -49,8 +47,7 @@ enhanced-backup/
 **Expected Output:**
 ```
 _________Enhanced Backup Service_________
-Source Directory: /home/user/documents
-Backup Mode: Incremental
+Enter keyword to search:
 Creating incremental backup: backups/incremental-20250714
 Running rsync with link-dest optimization...
 Backup completed successfully!
@@ -76,11 +73,9 @@ Timestamp: 2025-07-14 01:00:32
 
 **Sample Log Entries:**
 ```
-2025-07-14 01:00:30 | Script started - incremental backup mode enabled
-2025-07-14 01:00:31 | Source directory: /home/user/data
-2025-07-14 01:00:32 | Incremental backup created: backups/incremental-20250714
-2025-07-14 01:00:32 | Report generated: 3 files, 2.1M total
-2025-07-14 01:00:33 | Git tag created: backup-20250714
+2025-07-14 01:00:32 | Found matches for ' '
+2025-07-14 01:00:32 | Rsync incremental backups: backups/incremental-20250714
+2025-07-14 01:00:33 | Report generated: report.txt
 2025-07-14 01:00:33 | Script completed successfully
 ```
 
@@ -118,23 +113,6 @@ crontab -l
 ```
 
 ### 3. Web Server Configuration
-
-#### Apache Setup
-```bash
-# Install Apache
-sudo apt update && sudo apt install apache2
-
-# Enable and start service
-sudo systemctl enable --now apache2
-
-# Copy backups to web root
-sudo cp -r backups /var/www/html/backups
-
-# Apply configuration
-sudo cp web-config/apache-backup.conf /etc/apache2/sites-available/
-sudo a2ensite apache-backup
-sudo systemctl reload apache2
-```
 
 #### Nginx Setup
 ```bash
@@ -188,22 +166,6 @@ docs: update README with enhanced features
 ```
 
 ## Web Server Integration
-
-### Apache VirtualHost Configuration
-```apache
-<VirtualHost *:80>
-    DocumentRoot /var/www/html
-    
-    <Directory "/var/www/html/backups">
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-        DirectoryIndex disabled
-    </Directory>
-    
-    Alias /backups /var/www/html/backups
-</VirtualHost>
-```
 
 ### Nginx Server Block
 ```nginx
@@ -276,6 +238,3 @@ Building on Week 1 Linux + Git foundations with advanced DevOps practices
 
 ## License
 This project is for educational purposes as part of DevOps Pre-Requisite Course training.
-
-## Time Investment
-Approximately 4 hours for complete implementation and testing.
