@@ -1,1 +1,7 @@
-3 files archived, total size 16K
+Daily Backup Report - 2025-07-15
+================================
+2 files archived, total 8.0K
+Source: /home/muteeba/File-Management-System-/data
+Destination: backups/incremental-20250715
+Backup Type: Incremental
+Timestamp: 2025-07-15 05:51:59
